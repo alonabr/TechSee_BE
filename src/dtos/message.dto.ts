@@ -1,7 +1,23 @@
-import { IsString, IsEmail } from 'class-validator';
+import { IsString, IsEmail, IsDate, IsDateString } from 'class-validator';
 
-export class CreateUserDto {
+export class CreateMessageDto {
+
+  constructor(data: any) {
+    this.message = data.message;
+    this.username = data.username;
+    this.date = data.date;
+    this.userId = data.socketId;
+  }
 
   @IsString()
-  public body!: string
+  message!: string;
+  
+  @IsString()
+  username!: string
+
+  @IsDateString()
+  date!: String;
+
+  @IsString()
+  userId?: String;
 }

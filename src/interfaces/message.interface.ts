@@ -1,4 +1,6 @@
 export interface Message {
-  _id: string,
-  body: string
+  message: String,
+  username: String,
+  date: String,
+  userId?: String,
 }

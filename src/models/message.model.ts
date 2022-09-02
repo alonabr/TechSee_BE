@@ -4,10 +4,12 @@ import { Message } from '../interfaces/message.interface';
 
 
 const messageSchema = new mongoose.Schema({
+  message: String,
   username: String,
-  password: String
+  date: String,
+  userId: String,
 });
 
-const userModel = mongoose.model<Message & mongoose.Document>('Message', messageSchema);
+const messageModel = mongoose.model<Message & mongoose.Document>('Message', messageSchema);
 
-export default userModel;
+export default messageModel;

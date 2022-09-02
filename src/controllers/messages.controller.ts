@@ -1,23 +1,36 @@
 import { NextFunction, Request, Response } from 'express';
-//import { CreateUserDto } from '../dtos/users.dto';
-//import { Message } from '../interfaces/message.interface';
-//import userService from '../services/users.service';
+import { CreateMessageDto } from '../dtos/message.dto';
+import { Message } from '../interfaces/message.interface';
+import { MessageService } from '../services/messages.service';
 
-class MessagesController {
-  //public userService = new userService();
 
-  // public getUsers = async (req: Request, res: Response, next: NextFunction) => {
-  //   try {
-  //     const findAllUsersData: User[] = await this.userService.findAllUser();
-  //     res.status(200).json({ data: findAllUsersData, message: 'findAll' });
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // }
+export class MessagesController {
+  public readonly messageService = new MessageService();
+
   public getUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.status(200).json({ data: ['dwqdwqdw', 'wqdwdwqdqwdwqd'] });
+      const users: String[] = await this.messageService.findAllUsersFromMessages();
+      res.status(200).json({ data: users });
     } catch(error) {
+      next(error);
+    }
+  }
+
+  public getMessages = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const messages: Message[] = await this.messageService.findAllMessages();
+      res.status(200).json({ data: messages });
+    } catch(error) {
+      next(error);
+    }
+  }
+
+  public createMessage = async (req: Request, res: Response, next: NextFunction) => {
+    const message: CreateMessageDto = req.body;
+    try {
+      const createMessageData: Message = await this.messageService.createMessage(message);
+      res.status(201).json({ data: createMessageData, message: 'created' });
+    } catch (error) {
       next(error);
     }
   }
@@ -34,16 +47,7 @@ class MessagesController {
   //   }
   // }
 
-  // public createUser = async (req: Request, res: Response, next: NextFunction) => {
-  //   const userData: CreateUserDto = req.body;
-
-  //   try {
-  //     const createUserData: User = await this.userService.createUser(userData);
-  //     res.status(201).json({ data: createUserData, message: 'created' });
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // }
+  
 
   // public updateUser = async (req: Request, res: Response, next: NextFunction) => {
   //   const userId: string = req.params.id;
@@ -68,5 +72,3 @@ class MessagesController {
   //   }
   // }
 }
-
-export default MessagesController;

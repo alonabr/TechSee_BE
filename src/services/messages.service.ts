@@ -1,16 +1,29 @@
-//import { CreateUserDto } from '../dtos/users.dto';
-//import HttpException from '../exceptions/HttpException';
-
+import { CreateMessageDto } from "../dtos/message.dto";
+import HttpException from "../exceptions/HttpException";
 import { Message } from "../interfaces/message.interface";
 import messageModel from "../models/message.model";
 
 
-class MessageService {
-  public messages = messageModel;
+export class MessageService {
+  public messagesData = messageModel;
+
+  public async findAllUsersFromMessages(): Promise<String[]> {
+    const messages: Message[] = await this.messagesData.find();
+    const users = messages.map(message => message.username)
+    return users;
+  }
 
   public async findAllMessages(): Promise<Message[]> {
-    const users = await this.messages.find();
-    return users;
+    const messages: Message[] = await this.messagesData.find();
+    return messages;
+  }
+
+  public async createMessage(message: CreateMessageDto): Promise<Message> {
+    const createdMessage: Message = await this.messagesData.create(message);
+    if (createdMessage == null) {
+      throw new HttpException(400, `Failed to save message: ${message}`);
+    }
+    return createdMessage;
   }
 
   // public async findUserById(userId: string): Promise<User> {
@@ -19,14 +32,7 @@ class MessageService {
   //   throw new HttpException(409, "You're not user");
   // }
 
-  // public async createUser(userData: CreateUserDto): Promise<User> {
-  //   if (await this.users.findOne({ email: userData.email })) {
-  //     throw new HttpException(400, `User with email ${userData.email} already exists`);
-  //   }
-  //   const user = await this.users.create(userData);
-
-  //   return user;
-  // }
+ 
 
   // public async updateUser(userId: string, userData: User): Promise<User> {
   //   const user = await this.users.findByIdAndUpdate(userId, userData);
@@ -40,5 +46,3 @@ class MessageService {
   //   throw new HttpException(409, "You're not user");
   // }
 }
-
-export default MessageService;

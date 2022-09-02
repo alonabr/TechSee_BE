@@ -71,8 +71,8 @@ class App {
         useUnifiedTopology: true,
         useFindAndModify: false,
       };
-    //mongoose.connect(MONGO_CONNECTION_VERB+'://'+MONGO_USER+':'+MONGO_PASSWORD+MONGO_PATH, { ...options });
-    mongoose.connect("mongodb+srv://alonabr:Alon11abr@cluster0.qpfrstd.mongodb.net/?retryWrites=true&w=majority");
+    //const connectionString = MONGO_CONNECTION_VERB + '://'+ MONGO_USER + ':' + MONGO_PASSWORD + MONGO_PATH
+    mongoose.connect("mongodb+srv://alonabr:Alon11abr@cluster0.qpfrstd.mongodb.net", { ...options });
   }
 }
 
