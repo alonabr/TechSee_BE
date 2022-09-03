@@ -7,15 +7,18 @@ import { SocketUtil } from "./utils/socket";
 import validateEnv from "./utils/validateEnv";
 
 validateEnv();
+const log = createSimpleLogger();
 
-// const app = new App([
-//   new IndexRoute(),
-//   new SocketUsersRoute(),
-//   new MessagesRoute(),
-// ]);
-
-// app.listen();
-
- const log = createSimpleLogger();
- const socket = new SocketUtil(log);
+if(process.env.IS_MESSAGE_SERVER) {
+   const app = new App([
+   new IndexRoute(),
+   new SocketUsersRoute(log),
+   new MessagesRoute(log),
+  ]);
+  app.listen();
+} else {
+  const socket = new SocketUtil(log);
  socket.listen();
+}
+
+ 

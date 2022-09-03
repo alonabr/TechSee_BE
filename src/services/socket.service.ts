@@ -16,8 +16,9 @@ export class SocketService {
       this.logger.console.warn('SocketService::AddSocketUser user ', socket.username, ' already exist ', new Date().toJSON());
     } else {
       const createdSocket: SocketUser = await this.socketData.create(socket);
+      this.logger.info('SocketService::AddSocketUser Start## ', createdSocket, ' ', new Date().toJSON());
       if (createdSocket == null) {
-        this.logger.console.error('SocketService::AddSocketUser failed to create soket', socket.username, ' ', new Date().toJSON());
+        this.logger.warn('SocketService::AddSocketUser failed to create socket ', socket.username, ' ', new Date().toJSON());
       }
     }
     this.logger.info('SocketService::AddSocketUser ', socket.username, ' was added', new Date().toJSON());

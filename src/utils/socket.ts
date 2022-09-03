@@ -59,8 +59,8 @@ export class SocketUtil {
       })
 
       socket.on('disconnect', async () => {
-        io.emit('userDisconnected', socket.username)
         await this.socketService.DeteleSocketUser(socket.id);
+        io.emit('userDisconnected', socket.username)
       })
 
       socket.on('getUsers', async () => {
