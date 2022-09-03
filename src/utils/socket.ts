@@ -94,6 +94,6 @@ export class SocketUtil {
         //useFindAndModify: false,
       };
 
-    mongoose.connect("mongodb+srv://alonabr:1a2s3d4f@cluster0.37zodn4.mongodb.net/messages?retryWrites=true&w=majority");
+    mongoose.connect(`mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}@cluster0.37zodn4.mongodb.net/messages?retryWrites=true&w=majority`);
   }
 }
