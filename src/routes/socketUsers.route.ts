@@ -3,11 +3,11 @@ import { SocketUsersController } from '../controllers/socketUsers.controller';
 import Route from '../interfaces/routes.interface';
 
 export class SocketUsersRoute implements Route {
-  public path = '/socket/users';
+  public path = '/socket/';
   public router = Router();
-  public socketUsersController = new SocketUsersController();
+  public socketUsersController = new SocketUsersController(this.log);
 
-  constructor() {
+  constructor(private log:any) {
     this.initializeRoutes();
   }
 

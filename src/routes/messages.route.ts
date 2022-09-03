@@ -8,9 +8,9 @@ import validationJsonResponseMiddleware from '../middlewares/validationJsonRespo
 class MessagesRoute implements Route {
   public path = '/messages';
   public router = Router();
-  public messagesController = new MessagesController();
+  public messagesController = new MessagesController(this.log);
 
-  constructor() {
+  constructor(private log: any) {
     this.initializeRoutes();
   }
 

@@ -1,4 +1,4 @@
-export interface SocketIO {
+export interface SocketUser {
   username: String,
-  socketId: string
+  id: string
 }

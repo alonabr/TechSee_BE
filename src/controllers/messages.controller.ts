@@ -5,7 +5,10 @@ import { MessageService } from '../services/messages.service';
 
 
 export class MessagesController {
-  public readonly messageService = new MessageService();
+  public readonly messageService = new MessageService(this.log);
+
+  public constructor(private log:any) {
+  }
 
   public getUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {

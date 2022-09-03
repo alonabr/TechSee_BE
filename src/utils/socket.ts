@@ -1,68 +1,99 @@
 import { Server } from 'socket.io'
 import { createServer } from 'http'
-import { json, urlencoded } from 'express';
+import express, { json, urlencoded } from 'express';
 import { SocketService } from '../services/socket.service';
-import { SocketIO } from '../interfaces/socket.interface';
+import { SocketUser } from '../interfaces/socket.interface';
 import { CreateMessageDto } from '../dtos/message.dto';
-import dateFormat from "dateformat";
 import { MessageService } from '../services/messages.service';
 import { Message } from '../interfaces/message.interface';
+import mongoose from 'mongoose';
+
+
 
 export class SocketUtil {
+  
+  public readonly socketService = new SocketService(this.logger);
+  public readonly messageService = new MessageService(this.logger);
+  public app: express.Application;
+  public port: (string | number);
 
-  public readonly socketService = new SocketService();
-  public readonly messageService = new MessageService();
+  constructor(private logger: any) {
+    this.connectToDatabase();
+    this.app = express();
+    this.port = 3000;
+    this.app.use(json());
+    this.app.use(urlencoded({ extended: false }))
+  }
 
-
-  constructor(app: any) {
-    const server = createServer(app);
+  public listen() {
+    const server = createServer(this.app);
     const io = new Server(server, {
       cors: {
         origin: 'http://localhost:8080',
-        // origin: 'http://YOUR_HOST_IP:8080',
       },
     });
-    app.use(json());
-    app.use(urlencoded({ extended: false }))
 
     io.on('connection', (socket: any) => {
-      
-      socket.emit('initChat', {
-        data: 'Chat init',
-      });
 
-      socket.username = '';
+      socket.username = 'Anonymous';
 
-      socket.on('enterUsername', async (user: any) => {
+      socket.on('enterUsername', async (user: SocketUser) => {
+        this.logger.info('SocketUtil::enterUsername Start ', socket.username, ' ', new Date().toJSON());
         socket.username = user.username
-        const newSocket = { username: user.username, socketId: socket.id } as SocketIO;
+        const newSocket = { username: user.username, id: socket.id } as SocketUser;
         await this.socketService.AddSocketUser(newSocket)
-        io.emit('getUsers', await this.socketService.findAllSocketUsers())
-        io.emit('userConnected', socket.username)
-        console.log(`${socket.username} user connected`)
+        io.emit('userLoggedIn', socket.username)
+        this.logger.info('SocketUtil::enterUsername ', socket.username, ' user connected', new Date().toJSON());
       })
 
       socket.on('newMessage', async (data: any) => {
+        this.logger.info('SocketUtil::newMessage Start ', data, new Date().toJSON());
         let message = new CreateMessageDto({
           message: data.message,
-          username: socket.username,
-          date: dateFormat(new Date(), 'dd-mm-yyyy,  HH:MM'),
+          username: data.username,
+          date:  new Date().toDateString(),
           userId: socket.id,
         })        
-
         const messageRes: Message = await this.messageService.createMessage(message);
-        io.emit('newMessage', messageRes)
+        io.emit('newMessage', message)
       })
 
-      socket.on('disconnect', () => {
+      socket.on('disconnect', async () => {
         io.emit('userDisconnected', socket.username)
-        this.socketService.DeteleSocketUser(socket.username);
+        await this.socketService.DeteleSocketUser(socket.id);
+      })
+
+      socket.on('getUsers', async () => {
+        this.logger.info('SocketUtil::getUsers Start ', new Date().toJSON());
+        const users: String[] = await this.socketService.findAllSocketUsers();
+        this.logger.info('SocketUtil::getUsers ', users, new Date().toJSON());
+        io.emit('getUsers', users )
+      })
+
+      socket.on('getMessages', async () => {
+        this.logger.info('SocketUtil::getMessages Start ', new Date().toJSON());
+        const messages: Message[] = await this.messageService.findAllMessages();
+        this.logger.info('SocketUtil::getMessages ', messages, new Date().toJSON());
+        io.emit('getMessages', messages)
       })
 
     })
 
-    
+    server.listen(this.port, () => {
+      console.log(`App listening at http://localhost:${this.port}`)
+    })
+  }
 
-    
+  private connectToDatabase() {
+    const { MONGO_USER, MONGO_PASSWORD, MONGO_PATH, MONGO_CONNECTION_VERB } = process.env;
+    const options = {
+        //useCreateIndex: true,
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        //serverApi: ServerApiVersion.v1
+        //useFindAndModify: false,
+      };
+
+    mongoose.connect("mongodb+srv://alonabr:1a2s3d4f@cluster0.37zodn4.mongodb.net/messages?retryWrites=true&w=majority");
   }
 }

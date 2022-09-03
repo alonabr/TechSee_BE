@@ -72,7 +72,7 @@ class App {
         useFindAndModify: false,
       };
     //const connectionString = MONGO_CONNECTION_VERB + '://'+ MONGO_USER + ':' + MONGO_PASSWORD + MONGO_PATH
-    mongoose.connect("mongodb+srv://alonabr:Alon11abr@cluster0.qpfrstd.mongodb.net", { ...options });
+    mongoose.connect("mongodb+srv://alonabr:1a2s3d4f@cluster0.qpfrstd.mongodb.net/?retryWrites=true&w=majority", { ...options });
   }
 }
 
